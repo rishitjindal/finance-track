@@ -1,90 +1,471 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
-    <link rel="stylesheet" href="style.css">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Replit Web Template - Professional</title>
+  <link href="https://fonts.googleapis.com/css?family=JetBrains+Mono:400,700|Inter:400,600&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --sidebar-bg: #18181b;
+      --sidebar-accent: #232336;
+      --sidebar-active: #27293c;
+      --border: #232336;
+      --topbar-bg: #24243b;
+      --panel-bg: #212135;
+      --editor-bg: #18181b;
+      --editor-color: #edeef2;
+      --grey-1: #edeef2;
+      --grey-2: #aaa;
+      --purple: #7b5cff;
+      --green: #00e599;
+      --red: #f85e6f;
+      --radius: 12px;
+      --transition: 0.18s cubic-bezier(.4,0,.2,1);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0;}
+    body {
+      background: var(--editor-bg);
+      font-family: 'Inter', sans-serif;
+      height: 100vh;
+      color: var(--grey-1);
+      overflow: hidden;
+      letter-spacing: 0;
+    }
+    #root {
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    .topbar {
+      height: 54px;
+      background: var(--topbar-bg);
+      display: flex;
+      align-items: center;
+      padding: 0 28px;
+      border-bottom: 1px solid var(--border);
+      z-index: 2;
+    }
+    .topbar .logo {
+      width: 32px; height: 32px;
+      margin-right: 16px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .topbar .title {
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin-right: 32px;
+      letter-spacing: .01em;
+      color: #fdfdfd;
+    }
+    .topbar .actions {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 18px;
+    }
+    .topbar .btn {
+      background: var(--sidebar-accent);
+      border: none;
+      color: #fff;
+      font: inherit;
+      padding: 7px 18px;
+      border-radius: 7px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background var(--transition);
+      outline: none;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+    .topbar .btn:hover {
+      background: #2e2759;
+    }
+    .layout {
+      flex: 1;
+      display: flex;
+      min-height: 0;
+      min-width: 0;
+    }
+    .sidebar {
+      width: 68px;
+      background: var(--sidebar-bg);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 16px 0;
+      gap: 8px;
+      z-index: 2;
+    }
+    .sidebar .icon-btn {
+      background: none; border: none;
+      display: flex; align-items: center; justify-content: center;
+      width: 40px; height: 40px;
+      border-radius: 8px;
+      margin-bottom: 6px;
+      cursor: pointer;
+      color: var(--grey-2);
+      transition: background var(--transition), color var(--transition);
+      font-size: 1.35rem;
+    }
+    .sidebar .icon-btn.active, .sidebar .icon-btn:hover {
+      background: var(--sidebar-active);
+      color: var(--purple);
+    }
+    .main {
+      flex: 1;
+      display: flex;
+      min-width: 0;
+      min-height: 0;
+    }
+    .file-explorer {
+      width: 260px;
+      background: var(--panel-bg);
+      border-right: 1px solid var(--border);
+      padding: 16px 0;
+      display: flex; flex-direction: column;
+      min-width: 0;
+      box-shadow: 2px 0 8px rgba(19,18,53,.06);
+    }
+    .file-header {
+      margin: 0 16px 8px 18px;
+      font-size: 1.04rem;
+      font-weight: 600;
+      color: var(--grey-2);
+      letter-spacing: .01em;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #333248;
+    }
+    .file-list {
+      flex: 1;
+      overflow-y: auto;
+      padding-left: 4px;
+    }
+    .file {
+      padding: 7px 14px 7px 32px;
+      font-family: 'Inter', sans-serif;
+      font-size: 1.03rem;
+      cursor: pointer;
+      border-radius: 7px;
+      margin-bottom: 3px;
+      color: #edeef2;
+      display: flex; align-items: center;
+      position: relative;
+      transition: background var(--transition), color var(--transition);
+    }
+    .file.active, .file:hover {
+      background: #252247;
+      color: var(--purple);
+      font-weight: 500;
+    }
+    .file .file-dot {
+      position: absolute; left: 16px; top: 15px;
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: #3b3b63;
+    }
+    .file.active .file-dot, .file:hover .file-dot {
+      background: var(--purple);
+    }
+    .file .file-type {
+      font-size: .92em;
+      color: #85e1da;
+      letter-spacing: .01em;
+      margin-left: auto;
+    }
+    .editor-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      background: var(--editor-bg);
+    }
+    .editor-tabs {
+      display: flex;
+      align-items: flex-end;
+      background: var(--editor-bg);
+      padding: 0 0 0 12px;
+      min-height: 44px;
+      border-bottom: 1px solid #23233b;
+      position: relative;
+      gap: 0;
+    }
+    .tab {
+      padding: 8px 22px 8px 20px;
+      background: transparent;
+      border: none;
+      font: inherit;
+      color: #bfbfd5;
+      border-radius: 8px 8px 0 0;
+      margin-right: 5px;
+      cursor: pointer;
+      position: relative;
+      transition: background var(--transition), color var(--transition);
+      font-size: 1rem;
+      display: flex; align-items: center;
+      gap: 8px;
+    }
+    .tab.active {
+      background: #20213a;
+      color: #7b5cff;
+      font-weight: 500;
+    }
+    .tab .close-btn {
+      background: none;
+      border: none;
+      color: #b8b8e0;
+      cursor: pointer;
+      border-radius: 5px;
+      margin-left: 6px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px;
+      padding: 1px 3.5px;
+      transition: color var(--transition), background var(--transition);
+    }
+    .tab .close-btn:hover {
+      color: var(--red);
+      background: #2b1c33;
+    }
+    .editor {
+      flex: 1;
+      background: var(--editor-bg);
+      color: var(--editor-color);
+      font-family: 'JetBrains Mono', 'Fira Code', 'Menlo', monospace;
+      font-size: 1.04rem;
+      line-height: 1.68;
+      padding: 25px 35px;
+      outline: none;
+      min-width: 0;
+      border: 0;
+      resize: none;
+      width: 100%;
+      height: 100%;
+      transition: background 0.2s;
+      box-shadow: none;
+      border-radius: 0 0 var(--radius) var(--radius);
+    }
+    @media (max-width: 950px) {
+      .file-explorer { width: 180px;}
+      .topbar { padding: 0 9px;}
+      .editor-container .editor { padding:16px 7px;}
+    }
+    @media (max-width: 650px) {
+      .file-explorer {display: none;}
+      .editor-tabs {overflow-x:auto}
+    }
+  </style>
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <a class="navbar-brand" href="#">Budget App</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
+  <div id="root">
+    <!-- Top Bar -->
+    <div class="topbar">
+      <div class="logo">
+        <!-- Replit Logo (SVG) -->
+        <svg width="32" height="32" fill="none"><circle cx="16" cy="16" r="16" fill="#231e4a"/><path d="M13.172 6.382a3 3 0 0 1 5.656 0l1 3A2.994 2.994 0 0 1 23 13.223v5.555a2.994 2.994 0 0 1-3.172 2.841l-4.828-1A3 3 0 0 1 9 18.778v-5.555a2.994 2.994 0 0 1 3.172-2.841l1-3Z" fill="#7b5cff"/></svg>
+      </div>
+      <div class="title">Replit Web Template</div>
+      <div class="actions">
+        <button class="btn">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none"><path d="M2 3.75A1.75 1.75 0 0 1 3.75 2h10.5A1.75 1.75 0 0 1 16 3.75v10.5A1.75 1.75 0 0 1 14.25 16H3.75A1.75 1.75 0 0 1 2 14.25V3.75Zm8 3.25v5h-2v-5h2ZM9 13a1.25 1.25 0 1 0 0-2.5A1.25 1.25 0 0 0 9 13Z" fill="#7b5cff"/></svg>
+          Run
         </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav">
-                <li class="nav-item">
-                    <a class="nav-link active" href="dashboard.html">Dashboard</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="budget.html">Budget</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="reports.html">Reports</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Logout</a>
-                </li>
-            </ul>
-        </div>
-    </nav>
-
-    <div class="container mt-5">
-        <h2>Dashboard</h2>
-        <div class="row">
-            <div class="col-md-4">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">Current Balance</h5>
-                        <p class="card-text">$1,200.00</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">Budgeted Amount</h5>
-                        <p class="card-text">$2,000.00</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">Spent This Month</h5>
-                        <p class="card-text">$800.00</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <h3>Recent Transactions</h3>
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>Date</th>
-                    <th>Description</th>
-                    <th>Amount</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>2025-06-23</td>
-                    <td>Groceries</td>
-                    <td>$50.00</td>
-                </tr>
-                <tr>
-                    <td>2025-06-22</td>
-                    <td>Dinner</td>
-                    <td>$30.00</td>
-                </tr>
-            </tbody>
-        </table>
+        <button class="btn">
+          <svg style="margin-right:1px" xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none"><circle cx="9" cy="9" r="4.7" stroke="#7b5cff" stroke-width="1.5"/></svg>
+          Debug
+        </button>
+        <img  
+          src="https://ui-avatars.com/api/?background=7b5cff&color=fff&font-size=0.45&name=Prof"
+          alt="avatar" 
+          style="width:34px; height:34px; border-radius:50%; margin-left:17px;"
+        />
+      </div>
     </div>
+    <!-- Layout Body -->
+    <div class="layout">
+      <!-- Side Bar -->
+      <div class="sidebar">
+        <button class="icon-btn active" title="Files" data-panel="files">
+          <svg width="22" height="22" fill="none"><rect x="2" y="2" width="17" height="18" rx="4" stroke="currentColor" stroke-width="1.7"/><rect x="5" y="6" width="7" height="2" rx="1" fill="currentColor"/></svg>
+        </button>
+        <button class="icon-btn" title="Search" data-panel="search">
+          <svg width="23" height="23" fill="none"><circle cx="11" cy="10" r="6" stroke="currentColor" stroke-width="1.5"/><rect x="17.1" y="16.1" width="5" height="1.7" rx="0.85" transform="rotate(45 18.1 16.1)" fill="currentColor"/></svg>
+        </button>
+        <button class="icon-btn" title="Git" data-panel="git">
+          <svg width="23" height="23" fill="none"><circle cx="11.5" cy="8" r="2.25" stroke="currentColor" stroke-width="1.5"/><path d="M11.5 10.25v2.8m0 0c1.329 0 2.25.984 2.25 2.2 0 1.208-.921 2.2-2.25 2.2S9.25 16.458 9.25 15.25c0-1.216.921-2.2 2.25-2.2Z" stroke="currentColor" stroke-width="1.5"/></svg>
+        </button>
+        <button class="icon-btn" title="Settings" data-panel="settings">
+          <svg width="23" height="23" fill="none"><circle cx="11.5" cy="11.5" r="8" stroke="currentColor" stroke-width="1.7"/><circle cx="11.5" cy="11.5" r="3" fill="currentColor"/></svg>
+        </button>
+      </div>
+      <!-- File Explorer -->
+      <div class="file-explorer" id="filePanel">
+        <div class="file-header">Files</div>
+        <div class="file-list" id="fileList"></div>
+      </div>
+      <!-- Editor and Content -->
+      <div class="main">
+        <div class="editor-container">
+          <div class="editor-tabs" id="editorTabs">
+            <!-- Tabs will be rendered here -->
+          </div>
+          <textarea 
+            id="editor"
+            class="editor"
+            spellcheck="false"></textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    // --- Data & State ---
+    const files = [
+      {name: 'main.py', type: 'python', content: '# Main Python file\nprint("Hello, Replit!")\n'},
+      {name: 'index.html', type: 'html', content: '<!DOCTYPE html>\n<html lang="en">\n<head>\n  <title>App</title>\n</head>\n<body>\n  <h1>Hello World</h1>\n</body>\n</html>'},
+      {name: 'style.css', type: 'css', content: 'body {\n  background: #19172a;\n  color: #fff;\n}\n'},
+      {name: 'script.js', type: 'javascript', content: '// Main JS\nconsole.log("Hello!");\n'},
+      {name: 'README.md', type: 'markdown', content: '# Project\n\nWelcome to your Replit clone!\n'},
+      {name: '.replit', type: 'config', content: 'run = "python3 main.py"\nlanguage = "python"\n'},
+    ];
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="script.js"></script>
+    let openTabs = ['main.py'];
+    let activeTab = 'main.py';
+    const fileMap = Object.fromEntries(files.map(f=>[f.name, f]));
+
+    // --- DOM Elements ---
+    const fileListEl = document.getElementById('fileList');
+    const editorTabsEl = document.getElementById('editorTabs');
+    const editorEl = document.getElementById('editor');
+
+    // --- Renderers ---
+    function renderFiles() {
+      fileListEl.innerHTML = '';
+      for(const file of files){
+        const el = document.createElement('div');
+        el.className = 'file'+(activeTab===file.name?' active':'');
+        el.textContent = file.name;
+        // Dot
+        const dot = document.createElement('span');
+        dot.className = 'file-dot';
+        el.prepend(dot);
+        // Extension type
+        const extType = {
+          py:  'PY',
+          js:  'JS',
+          html:'HTML',
+          css: 'CSS',
+          md:  'MD',
+          config: 'CFG'
+        }[file.type] || file.type.toUpperCase().substring(0,2);
+        const extEl = document.createElement('span');
+        extEl.className = 'file-type';
+        extEl.textContent = extType;
+        el.appendChild(extEl);
+        // Click to open
+        el.addEventListener('click', () => openFileTab(file.name));
+        fileListEl.appendChild(el);
+      }
+    }
+
+    function renderTabs() {
+      editorTabsEl.innerHTML = '';
+      for(const fname of openTabs) {
+        const file = fileMap[fname];
+        if (!file) continue;
+        const tab = document.createElement('button');
+        tab.className = 'tab'+(activeTab===fname ? ' active':'');
+        tab.innerHTML = `<span>${file.name}</span>`;
+        // Close button
+        if (openTabs.length > 1) {
+          const closeBtn = document.createElement('button');
+          closeBtn.className = 'close-btn';
+          closeBtn.title = 'Close';
+          closeBtn.innerHTML = '&times;';
+          closeBtn.onclick = (e) => { 
+            e.stopPropagation(); 
+            closeTab(fname); 
+          };
+          tab.appendChild(closeBtn);
+        }
+        tab.onclick = ()=> setActiveTab(fname);
+        editorTabsEl.appendChild(tab);
+      }
+    }
+
+    function openFileTab(fname) {
+      if(!openTabs.includes(fname)) openTabs.push(fname);
+      setActiveTab(fname);
+    }
+    function setActiveTab(fname) {
+      activeTab = fname;
+      renderTabs();
+      renderFiles();
+      updateEditor();
+    }
+    function closeTab(fname) {
+      let idx = openTabs.indexOf(fname);
+      if(idx<0) return;
+      openTabs.splice(idx,1);
+      if(activeTab === fname) {
+        activeTab = openTabs[Math.max(0,idx-1)] || openTabs[0];
+      }
+      renderTabs();
+      renderFiles();
+      updateEditor();
+    }
+
+    function updateEditor() {
+      const file = fileMap[activeTab];
+      if (file) editorEl.value = file.content;
+      // Set syntax highlighting style based on extension (optionally)
+      editorEl.setAttribute('data-type', file.type);
+    }
+
+    // --- Side Panel switching (sidebar) ---
+    const panels = {
+      files: document.getElementById('filePanel'),
+      // Add more panels if needed
+    };
+    document.querySelectorAll('.sidebar .icon-btn').forEach(btn=>{
+      btn.addEventListener('click',()=>{
+        document.querySelectorAll('.sidebar .icon-btn').forEach(b=>b.classList.remove('active'));
+        btn.classList.add('active');
+        let p = btn.dataset.panel;
+        Object.values(panels).forEach(panel => panel && (panel.style.display='none'));
+        if(panels[p]) panels[p].style.display = '';
+        // Could handle search/git/settings
+      });
+    });
+
+    // --- Editor change/save (simulate save on change)
+    editorEl.addEventListener('input', ()=>{
+      if (fileMap[activeTab]) {
+        fileMap[activeTab].content = editorEl.value;
+        // Optionally mark the tab as "changed"
+      }
+    });
+
+    // --- Initial Render ---
+    renderFiles();
+    renderTabs();
+    updateEditor();
+
+    // Keyboard shortcuts
+    editorEl.addEventListener('keydown', e=>{
+      // Tab for indent (since textarea)
+      if(e.key==='Tab'){
+        e.preventDefault();
+        const {selectionStart: s, selectionEnd: eEnd, value: val} = editorEl;
+        editorEl.value = val.slice(0,s)+"  "+val.slice(eEnd);
+        editorEl.selectionStart = editorEl.selectionEnd = s+2;
+      }
+      // Ctrl+S for save
+      if((e.ctrlKey||e.metaKey) && e.key === 's') {
+        e.preventDefault();
+        // Optionally flash a "Saved" indicator.
+      }
+    });
+  </script>
 </body>
 </html>
